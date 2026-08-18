@@ -1,0 +1,40 @@
+# =============================================================
+#  STRETCH GOAL — Ansible
+#  Même logique que generate.py, mais avec l'outil ROI du
+#  NetDevOps. Ce playbook lit l'inventaire et déploie les
+#  configs "en local" (module template) — pas besoin de
+#  matériel réseau. Le jour où tu remplaces le module
+#  'template' par 'cisco.ios.ios_config', tu pousses sur du
+#  vrai équipement : la démarche est IDENTIQUE.
+#
+#  Lancement :
+#    cd ansible
+#    ansible-playbook -i localhost, playbook.yml
+# =============================================================
+- name: Générer les configs réseau (config-as-code)
+  hosts: localhost
+  gather_facts: false
+  vars:
+    inventory_file: "../inventory/devices.yml"
+
+  tasks:
+    - name: Charger la source de vérité
+      ansible.builtin.include_vars:
+        file: "{{ inventory_file }}"
+
+    - name: Créer le dossier de sortie
+      ansible.builtin.file:
+        path: ../build_ansible
+        state: directory
+        mode: "0755"
+
+    - name: Rendre une config par équipement (idempotent)
+      ansible.builtin.template:
+        src: ../templates/switch.j2
+        dest: "../build_ansible/{{ item.hostname }}.cfg"
+        mode: "0644"
+      loop: "{{ devices }}"
+      vars:
+        device: "{{ item }}"   # le template réutilise la variable 'device'
+      loop_control:
+        label: "{{ item.hostname }}"

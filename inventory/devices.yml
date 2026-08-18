@@ -1,0 +1,49 @@
+# =============================================================
+#  SOURCE OF TRUTH (source de vérité)
+#  Un seul fichier décrit tout le réseau. L'automatisation
+#  s'appuie dessus : on ne touche JAMAIS un équipement à la main.
+# =============================================================
+devices:
+  - hostname: sw-par-access-01
+    site: paris
+    role: access
+    mgmt_ip: 10.0.10.1
+    vlans:
+      - { id: 10, name: users }
+      - { id: 20, name: voip }
+      - { id: 99, name: mgmt }
+    uplinks:
+      - { interface: Ethernet1/1, description: uplink-to-core }
+    ntp_servers:
+      - 10.0.0.1
+      - 10.0.0.2
+
+  - hostname: sw-par-access-02
+    site: paris
+    role: access
+    mgmt_ip: 10.0.10.2
+    vlans:
+      - { id: 10, name: users }
+      - { id: 20, name: voip }
+      - { id: 99, name: mgmt }
+    uplinks:
+      - { interface: Ethernet1/1, description: uplink-to-core }
+    ntp_servers:
+      - 10.0.0.1
+      - 10.0.0.2
+
+  - hostname: sw-tls-core-01
+    site: toulouse
+    role: core
+    mgmt_ip: 10.0.20.1
+    vlans:
+      - { id: 10, name: users }
+      - { id: 20, name: voip }
+      - { id: 30, name: servers }
+      - { id: 99, name: mgmt }
+    uplinks:
+      - { interface: Ethernet1/1, description: uplink-to-wan }
+      - { interface: Ethernet1/2, description: uplink-to-dc }
+    ntp_servers:
+      - 10.0.0.1
+      - 10.0.0.2

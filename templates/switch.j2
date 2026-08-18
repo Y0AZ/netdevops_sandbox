@@ -1,0 +1,26 @@
+!
+! Config générée automatiquement — NE PAS éditer à la main
+! Device : {{ device.hostname }} ({{ device.site }} / {{ device.role }})
+!
+hostname {{ device.hostname }}
+!
+{% for vlan in device.vlans -%}
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+!
+{% endfor -%}
+interface mgmt0
+ description management
+ ip address {{ device.mgmt_ip }}/24
+!
+{% for uplink in device.uplinks -%}
+interface {{ uplink.interface }}
+ description {{ uplink.description }}
+ switchport mode trunk
+!
+{% endfor -%}
+{% for ntp in device.ntp_servers -%}
+ntp server {{ ntp }}
+{% endfor -%}
+!
+end
