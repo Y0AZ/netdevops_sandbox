@@ -13,6 +13,7 @@
 # =============================================================
 - name: Générer les configs réseau (config-as-code)
   hosts: localhost
+  connection: local 
   gather_facts: false
   vars:
     inventory_file: "../inventory/devices.yml"
